@@ -1,6 +1,7 @@
 package representation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ public class TestRepresentant {
 	
 	private Representant r; // L'objet à tester
 	private ZoneGeographique occitanie;
+        private ZoneGeographique ile_de_france;
 	
 	@BeforeEach
 	public void setUp() {
@@ -20,7 +22,7 @@ public class TestRepresentant {
 		occitanie.setIndemniteRepas(INDEMNITE_OCCITANIE);
 
 		r = new Representant(36, "Bastide", "Rémi", occitanie);	
-		r.setSalaireFixe(FIXE_BASTIDE);				
+		r.setSalaireFixe(FIXE_BASTIDE);
 	}
 	
 	@Test
@@ -82,6 +84,54 @@ public class TestRepresentant {
 		}
 
 	}
-	
+        
+        @Test
+        public void enregistrerCAErreur() {
+            assertThrows(IllegalArgumentException.class, () -> {
+                        // On enregistre un CA pour un mois qui n'exite pas
+        		r.enregistrerCA(12, 5000);
+                }, "Cet appel doit lever une exception");
+        }
+        
+        @Test
+        public void salaireMensuelErreur() {
+            // Exception sur le mois
+            assertThrows(IllegalArgumentException.class, () -> {
+                        // On enregistre un CA pour un mois qui n'exite pas
+        		r.salaireMensuel(12, 0.5f);
+                }, "Cet appel doit lever une exception");
+            // Exception sur le pourcentage
+            assertThrows(IllegalArgumentException.class, () -> {
+                        // On enregistre un CA pour un mois qui n'exite pas
+        		r.salaireMensuel(11, -0.5f);
+                }, "Cet appel doit lever une exception");
+        }
+        
+        @Test
+        public void testToString() {
+            assertEquals("Representant{numero=36, nom=Bastide, prenom=Rémi}", r.toString());
+        }
+        
+        @Test
+        public void testConstructeur() {
+            assertEquals("Bastide", r.getNom());
+            assertEquals("Rémi", r.getPrenom());
+            assertEquals(36, r.getNumero());
+            assertEquals(occitanie, r.getSecteur());
+            assertEquals(FIXE_BASTIDE, r.getSalaireFixe());
+        }
+        
+	@Test
+        public void testAdresse() {
+            r.setAdresse("Quelque part");
+            assertEquals("Quelque part", r.getAdresse());
+        }
+        
+        @Test
+        public void testSecteur() {
+            ile_de_france = new ZoneGeographique(4, "Ile de France");
+            r.setSecteur(ile_de_france);
+            assertEquals(ile_de_france, r.getSecteur());
+        }
 	
 }

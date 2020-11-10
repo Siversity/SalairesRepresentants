@@ -1,5 +1,7 @@
 package representation;
 
+import java.util.HashMap;
+
 public class Representant {
 
 	private final int numero;
@@ -7,11 +9,19 @@ public class Representant {
 	private final String prenom;
 	private String adresse;
 	private float salaireFixe;
+        private HashMap<Integer, Float> CAMensuel;
+        private ZoneGeographique secteur;
 
 	public Representant(int numero, String nom, String prenom, ZoneGeographique secteur) {
 		this.numero = numero;
 		this.nom = nom;
 		this.prenom = prenom;
+                this.secteur = secteur;
+                // On rempli la liste des salaires mensuels à 0
+                this.CAMensuel = new HashMap<Integer, Float>();
+                for (int i = 0; i<11; i++) {
+                    CAMensuel.put(i, 0f);
+                }
 	}
 
 	public int getNumero() {
@@ -43,13 +53,11 @@ public class Representant {
 	}
 
 	public ZoneGeographique getSecteur() {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		return secteur;
 	}
 
 	public void setSecteur(ZoneGeographique secteur) {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		this.secteur = secteur;
 	}
 
 	/**
@@ -65,8 +73,7 @@ public class Representant {
 		if (montant < 0) {
 			throw new IllegalArgumentException("Le montant doit être positif ou null");
 		}
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		CAMensuel.replace(mois, montant);
 	}
 
 	/**
@@ -76,8 +83,16 @@ public class Representant {
 	 * @return le salaire pour ce mois, tenant compte du salaire fixe, de l'indemnité repas, et du pourcentage sur CA
 	 */
 	public float salaireMensuel(int mois, float pourcentage) {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+                // vérifier les paramètres
+		if (mois < 0 || mois > 11) {
+			throw new IllegalArgumentException("Le mois doit être compris entre 0 et 11");
+		}
+		if (pourcentage < 0) {
+			throw new IllegalArgumentException("Le pourcentage doit être positif ou null");
+		}
+		float montant = 0+ CAMensuel.get(mois);
+                float salaire = salaireFixe  + (montant*pourcentage) + this.getSecteur().getIndemniteRepas();
+                return salaire;
 	}
 
 	@Override
